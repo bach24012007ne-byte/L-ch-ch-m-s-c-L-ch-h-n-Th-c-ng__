@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetCompanion - Lịch chăm sóc & Lịch hẹn Thú cưng</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+        :root {
+            --primary: #00875A;
+            --primary-light: #E6F4EA;
+            --primary-dark: #006644;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --bg-body: #F8FAFC;
+            --border-color: #E5E7EB;
+            --accent-orange: #D97706;
+            --accent-orange-bg: #FEF3C7;
+        }
+
+        body { background-color: var(--bg-body); color: var(--text-main); line-height: 1.5; }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo-area { display: flex; align-items: center; gap: 24px; }
+        .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--primary); }
+        .nav-links { display: flex; gap: 20px; list-style: none; font-size: 14px; font-weight: 500; color: var(--text-muted); }
+        .nav-links li { cursor: pointer; transition: color 0.2s; }
+        .nav-links li:hover, .nav-links li.active { color: var(--primary); }
+
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .search-box { position: relative; }
+        .search-box input {
+            padding: 8px 12px 8px 36px; border-radius: 20px; border: 1px solid var(--border-color);
+            font-size: 13px; width: 220px; outline: none;
+        }
+        .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px; }
+        .user-profile { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+        .container { max-width: 1280px; margin: 24px auto; padding: 0 16px; }
+
+        .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        .page-title h1 { font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+        .page-title p { font-size: 14px; color: var(--text-muted); }
+
+        .btn-primary {
+            background-color: var(--primary); color: white; border: none; padding: 10px 18px;
+            border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: background 0.2s;
+        }
+        .btn-primary:hover { background-color: var(--primary-dark); }
+
+        .ai-banner {
+            background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 20px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .ai-banner-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .ai-badges { display: flex; gap: 10px; align-items: center; }
+        .badge-ai { background-color: var(--primary); color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .badge-sub { font-size: 13px; color: var(--text-muted); }
+        .ai-content-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+        .ai-left-box { background: var(--bg-body); padding: 16px; border-radius: 8px; }
+        .ai-right-box {
+            background: var(--primary-light); border: 1px solid #A3E635; padding: 16px;
+            border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between;
+        }
+
+        .dashboard-grid { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
+
+        .calendar-card { background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-weight: 600; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; font-size: 13px; }
+        .calendar-day-name { color: var(--text-muted); font-weight: 500; padding-bottom: 8px; }
+        .calendar-date {
+            aspect-ratio: 1; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; border-radius: 50%; cursor: pointer; transition: background 0.2s;
+        }
+        .calendar-date:hover { background: var(--bg-body); }
+        .calendar-date.active { background: var(--primary); color: white; font-weight: 600; }
+
+        .events-section { display: flex; flex-direction: column; gap: 16px; }
+        .tabs { display: flex; gap: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+        .tab {
+            padding: 6px 14px; border-radius: 16px; font-size: 13px; font-weight: 500;
+            cursor: pointer; background: #ffffff; border: 1px solid var(--border-color); color: var(--text-muted);
+        }
+        .tab.active { background: var(--text-main); color: white; border-color: var(--text-main); }
+
+        .event-card {
+            background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .event-card.orange-border { border-left: 4px solid var(--accent-orange); }
+        .event-top { display: flex; justify-content: space-between; align-items: center; }
+        .event-info { display: flex; gap: 12px; align-items: center; }
+        .event-title h3 { font-size: 15px; font-weight: 600; }
+        .event-title p { font-size: 13px; color: var(--text-muted); }
+
+        .status-badge { font-size: 12px; padding: 4px 10px; border-radius: 12px; font-weight: 500; }
+        .status-green { background: var(--primary-light); color: var(--primary); }
+        .status-orange { background: var(--accent-orange-bg); color: var(--accent-orange); }
+
+        .event-details-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            background: var(--bg-body); padding: 10px; border-radius: 8px; font-size: 13px;
+        }
+        .event-actions { display: flex; justify-content: flex-end; gap: 10px; }
+        .btn-sm {
+            padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: 600;
+            cursor: pointer; border: 1px solid var(--border-color); background: white;
+        }
+        .btn-sm-primary { background: var(--primary); color: white; border: none; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: white; padding: 24px; border-radius: 12px; width: 450px; max-width: 90%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 16px;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 18px; }
+        .modal-close { cursor: pointer; font-size: 18px; color: var(--text-muted); }
+        .form-group { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; }
+        .form-group input, .form-group select { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; outline: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="logo"><i class="fa-solid fa-paw"></i> PetCompanion</div>
+            <ul class="nav-links">
+                <li class="active">Chủ nuôi (PET OWNER)</li>
+                <li>Hồ sơ thú cưng</li>
+                <li>Lịch chăm sóc</li>
+                <li>Lịch sử dịch vụ</li>
+                <li>AI Trợ lý PetCare</li>
+            </ul>
+        </div>
+        <div class="header-right">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Tìm kiếm hồ sơ, bác sĩ...">
+            </div>
+            <div class="user-profile">
+                <span>Nguyễn Văn An</span>
+                <i class="fa-solid fa-chevron-down" style="font-size: 11px;"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Lịch chăm sóc & Lịch hẹn Thú cưng</h1>
+                <p>Theo dõi các đợt tiêm phòng, tẩy giun, spa tắm cắt tỉa và khám định kỳ.</p>
+            </div>
+            <button class="btn-primary" id="openModalBtn">
+                <i class="fa-solid fa-plus"></i> Tạo lịch nhắc / Đặt hẹn mới
+            </button>
+        </div>
+
+        <div class="ai-banner" id="aiBannerBox">
+            <div class="ai-banner-top">
+                <div class="ai-badges">
+                    <span class="badge-ai">AI CARE ASSISTANT V2.4</span>
+                    <span class="badge-sub">Tính năng AI chuẩn đồ án CSE122</span>
+                </div>
+                <span class="badge-sub" style="color: var(--primary); font-weight: 500;">Đang học máy dựa trên sử tiêm chủng</span>
+            </div>
+            <div class="ai-content-grid">
+                <div class="ai-left-box">
+                    <strong>Hồ sơ đang phân tích:</strong>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Chọn thú cưng: <b>Milo (Golden Retriever)</b></p>
+                </div>
+                <div class="ai-right-box">
+                    <div>
+                        <span style="font-size: 12px; font-weight: 600; color: var(--primary);">ĐỀ XUẤT NHẮC LỊCH TỪ HỆ THỐNG AI</span>
+                        <h4 style="font-size: 15px; margin: 4px 0;">Uống thuốc tẩy giun vào Thứ Bảy, 18/11/2025 lúc 08:30</h4>
+                        <p style="font-size: 12px; color: var(--text-muted);">Lý do: Dựa trên chu kỳ 3 tháng/lần cho chó trưởng thành 25kg.</p>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <button class="btn-sm btn-sm-primary" id="acceptAiBtn">Chấp nhận & Lưu lịch</button>
+                        <button class="btn-sm" id="dismissAiBtn">Bỏ qua gợi ý</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="calendar-card">
+                <div class="calendar-header">
+                    <span>Tháng 11 / 2025</span>
+                    <div>
+                        <i class="fa-solid fa-chevron-left" style="cursor: pointer; margin-right: 12px;"></i>
+                        <i class="fa-solid fa-chevron-right" style="cursor: pointer;"></i>
+                    </div>
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-day-name">T2</div>
+                    <div class="calendar-day-name">T3</div>
+                    <div class="calendar-day-name">T4</div>
+                    <div class="calendar-day-name">T5</div>
+                    <div class="calendar-day-name">T6</div>
+                    <div class="calendar-day-name">T7</div>
+                    <div class="calendar-day-name">CN</div>
+                    <div class="calendar-date">1</div>
+                    <div class="calendar-date">2</div>
+                    <div class="calendar-date">3</div>
+                    <div class="calendar-date">4</div>
+                    <div class="calendar-date">5</div>
+                    <div class="calendar-date">6</div>
+                    <div class="calendar-date">7</div>
+                    <div class="calendar-date">8</div>
+                    <div class="calendar-date">9</div>
+                    <div class="calendar-date">10</div>
+                    <div class="calendar-date">11</div>
+                    <div class="calendar-date">12</div>
+                    <div class="calendar-date">13</div>
+                    <div class="calendar-date">14</div>
+                    <div class="calendar-date active">15</div>
+                    <div class="calendar-date">16</div>
+                    <div class="calendar-date">17</div>
+                    <div class="calendar-date" style="background: var(--primary-light); font-weight: bold;">18</div>
+                    <div class="calendar-date">19</div>
+                    <div class="calendar-date">20</div>
+                    <div class="calendar-date">21</div>
+                    <div class="calendar-date">22</div>
+                    <div class="calendar-date">23</div>
+                    <div class="calendar-date">24</div>
+                    <div class="calendar-date">25</div>
+                    <div class="calendar-date">26</div>
+                    <div class="calendar-date">27</div>
+                    <div class="calendar-date">28</div>
+                    <div class="calendar-date">29</div>
+                    <div class="calendar-date">30</div>
+                </div>
+            </div>
+
+            <div class="events-section">
+                <div class="tabs">
+                    <div class="tab active" data-filter="all">Tất cả lịch (3)</div>
+                    <div class="tab" data-filter="upcoming">Lịch sắp tới</div>
+                    <div class="tab" data-filter="home">Nhắc tại nhà</div>
+                </div>
+
+                <div id="eventsContainer" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div class="event-card" data-category="upcoming">
+                        <div class="event-top">
+                            <div class="event-info">
+                                <div class="event-title">
+                                    <h3>Khám tổng quát & Tiêm nhắc vắc xin dại</h3>
+                                    <p>Dành cho: Milo (Chó Golden Retriever - 2 tuổi)</p>
+                                </div>
+                            </div>
+                            <span class="status-badge status-green">Đã xác nhận</span>
+                        </div>
+                        <div class="event-details-grid">
+                            <div><b>Thời gian:</b> 10:00 Sáng mai</div>
+                            <div><b>Địa điểm:</b> PetCare Quận 1</div>
+                            <div><b>Bác sĩ:</b> BS. CKI Hoàng Mai</div>
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-sm cancel-btn">Hủy / Đổi hẹn</button>
+                            <button class="btn-sm btn-sm-primary">Xem chi tiết hồ sơ</button>
+                        </div>
+                    </div>
+
+                    <div class="event-card" data-category="upcoming">
+                        <div class="event-top">
+                            <div class="event-info">
+                                <div class="event-title">
+                                    <h3>Spa tắm dưỡng lông thảo mộc & Cắt tỉa vệ sinh</h3>
+                                    <p>Dành cho: Luna (Mèo BSH xám khói - 1.5 tuổi)</p>
+                                </div>
+                            </div>
+                            <span class="status-badge status-orange">Chờ tiếp nhận</span>
+                        </div>
+                        <div class="event-details-grid">
+                            <div><b>Thời gian:</b> 14:30 (18/11/2025)</div>
+                            <div><b>Cơ sở:</b> Pet Spa & Wellness</div>
+                            <div><b>Kỹ thuật viên:</b> Groomer Linh Nguyễn</div>
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-sm cancel-btn">Hủy đặt chỗ</button>
+                            <button class="btn-sm btn-sm-primary">Nhắc duyệt lịch</button>
+                        </div>
+                    </div>
+
+                    <div class="event-card orange-border" data-category="home">
+                        <div class="event-top">
+                            <div class="event-info">
+                                <div class="event-title">
+                                    <h3>Lời nhắc tự động: Bổ sung viên Canxi & Dầu cá</h3>
+                                    <p>Lịch nhắc định kỳ hàng ngày (Milo & Luna)</p>
+                                </div>
+                            </div>
+                            <span class="status-badge status-orange">Tự động tại nhà</span>
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-sm dismiss-alarm">Tắt chuông hôm nay</button>
+                            <button class="btn-sm btn-sm-primary done-alarm" style="background: var(--accent-orange);">Đã cho uống xong</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="appointmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Tạo lịch nhắc / Đặt hẹn mới</span>
+                <i class="fa-solid fa-xmark modal-close" id="closeModalBtn"></i>
+            </div>
+            <div class="form-group">
+                <label>Tên lịch hẹn / Chăm sóc:</label>
+                <input type="text" id="inputTitle" placeholder="Ví dụ: Khám định kỳ, Tẩy giun...">
+            </div>
+            <div class="form-group">
+                <label>Thú cưng:</label>
+                <select id="inputPet">
+                    <option>Milo (Golden Retriever)</option>
+                    <option>Luna (Mèo BSH xám khói)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Thời gian dự kiến:</label>
+                <input type="datetime-local" id="inputTime">
+            </div>
+            <div class="form-group">
+                <label>Phân loại lịch:</label>
+                <select id="inputType">
+                    <option value="upcoming">Lịch khám / Spa (Phòng khám)</option>
+                    <option value="home">Nhắc uống thuốc tại nhà</option>
+                </select>
+            </div>
+            <button class="btn-primary" id="saveAppointmentBtn" style="justify-content: center; margin-top: 8px;">Lưu lịch hẹn</button>
+        </div>
+    </div>
+
+    <script>
+        const tabs = document.querySelectorAll('.tabs .tab');
+        const eventCards = document.querySelectorAll('.event-card');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const filter = tab.getAttribute('data-filter');
+                eventCards.forEach(card => {
+                    if (filter === 'all') {
+                        card.style.display = 'flex';
+                    } else {
+                        const category = card.getAttribute('data-category');
+                        if (category === filter) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+
+        const acceptAiBtn = document.getElementById('acceptAiBtn');
+        const dismissAiBtn = document.getElementById('dismissAiBtn');
+        const aiBannerBox = document.getElementById('aiBannerBox');
+
+        acceptAiBtn.addEventListener('click', () => {
+            alert('Đã chấp thuận đề xuất AI! Lịch uống thuốc tẩy giun ngày 18/11/2025 đã được thêm vào hệ thống.');
+            aiBannerBox.style.display = 'none';
+        });
+
+        dismissAiBtn.addEventListener('click', () => {
+            aiBannerBox.style.display = 'none';
+        });
+
+        const modal = document.getElementById('appointmentModal');
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        openModalBtn.addEventListener('click', () => {
+            modal.classList.add('active');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        const saveAppointmentBtn = document.getElementById('saveAppointmentBtn');
+        const eventsContainer = document.getElementById('eventsContainer');
+
+        saveAppointmentBtn.addEventListener('click', () => {
+            const title = document.getElementById('inputTitle').value.trim();
+            const pet = document.getElementById('inputPet').value;
+            const time = document.getElementById('inputTime').value;
+            const type = document.getElementById('inputType').value;
+
+            if (!title) {
+                alert('Vui lòng nhập tên lịch hẹn!');
+                return;
+            }
+
+            const newCard = document.createElement('div');
+            newCard.className = type === 'home' ? 'event-card orange-border' : 'event-card';
+            newCard.setAttribute('data-category', type);
+
+            newCard.innerHTML = `
+                <div class="event-top">
+                    <div class="event-info">
+                        <div class="event-title">
+                            <h3>${title}</h3>
+                            <p>Dành cho: ${pet}</p>
+                        </div>
+                    </div>
+                    <span class="status-badge ${type === 'home' ? 'status-orange' : 'status-green'}">${type === 'home' ? 'Tự động tại nhà' : 'Mới đặt'}</span>
+                </div>
+                <div class="event-details-grid">
+                    <div><b>Thời gian:</b> ${time ? time : 'Sắp diễn ra'}</div>
+                    <div><b>Địa điểm:</b> Theo yêu cầu</div>
+                    <div><b>Trạng thái:</b> Đã tạo thành công</div>
+                </div>
+                <div class="event-actions">
+                    <button class="btn-sm cancel-btn">Hủy lịch</button>
+                    <button class="btn-sm btn-sm-primary">Xem chi tiết</button>
+                </div>
+            `;
+
+            eventsContainer.prepend(newCard);
+            modal.classList.remove('active');
+            
+            document.getElementById('inputTitle').value = '';
+            alert('Tạo lịch nhắc / đặt hẹn thành công!');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('cancel-btn')) {
+                if (confirm('Bạn có chắc chắn muốn hủy lịch hẹn này không?')) {
+                    e.target.closest('.event-card').remove();
+                }
+            }
+            if (e.target.classList.contains('done-alarm')) {
+                const card = e.target.closest('.event-card');
+                const badge = card.querySelector('.status-badge');
+                badge.textContent = 'Đã hoàn thành hôm nay';
+                badge.className = 'status-badge status-green';
+                e.target.textContent = 'Đã uống';
+                e.target.disabled = true;
+            }
+            if (e.target.classList.contains('dismiss-alarm')) {
+                e.target.closest('.event-card').style.opacity = '0.5';
+                alert('Đã tắt chuông nhắc nhở trong hôm nay.');
+            }
+        });
+
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase();
+            eventCards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(keyword)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
